@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire Escalade</title>
+    <style>
+        :root {
+            --primary-color: #FF4500;
+            --primary-hover: #E43A03;
+            --background-start: #FF8C00;
+            --background-mid: #FF4500;
+            --background-end: #FA8072;
+            --form-background: #f9f9f9;
+            --input-border: #ddd;
+            --text-color: #333;
+            --label-color: #555;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, var(--background-start), var(--background-mid), var(--background-end));
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        #formulaire {
+            flex: 1 1 400px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            background-color: var(--form-background);
+            transition: transform 0.3s ease-in-out;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        #formulaire:hover {
+            transform: scale(1.02);
+        }
+
+        #previsualisation {
+            flex: 1 1 500px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            background-color: var(--form-background);
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #previsualisation:hover {
+            transform: scale(1.01);
+        }
+
+        h2 {
+            color: var(--text-color);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--input-border);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--label-color);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 14px;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 5px rgba(255, 69, 0, 0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        #contenu_previsualisation {
+            white-space: pre-wrap;
+            font-family: monospace;
+            background-color: #eee;
+            padding: 15px;
+            border-radius: 5px;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 300px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+
+        .date-group {
+            display: flex;
+			align-items: center;
+			gap: 10px;
+			flex-wrap: wrap;
+			margin-bottom: 10px;
+        }
+
+        .date-group span {
+            flex: 0 0 auto;
+        }
+
+        .date-group input[type="text"] {
+            flex: 1;
+        }
+
+        section {
+            margin-bottom: 25px;
+        }
+
+        .status-message {
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            #formulaire, #previsualisation {
+                width: 100%;
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <form id="formulaire">
+            <section>
+                <h2>Informations générales</h2>
+                <div class="form-group">
+                    <label for="contexte">Contexte :</label>
+                    <select id="contexte" name="contexte">
+                        <option value="">Sélectionner</option>
+                        <option value="Pack AR">Pack AR</option>
+                        <option value="Pack Syndic">Pack Syndic</option>
+						<option value="Pack AP">Pack AP</option>
+                        <option value="Règle Hébergée">Règle Hébergée</option>
+						<option value="Lre">Lre</option>
+						<option value="Formulaire Automatisé">Formulaire Automatisé</option>
+						<option value="Formulaire de Publipostage">Formulaire de Publipostage</option>
+						<option value="Répertoire Automatisé">Répertoire Automatisé</option>						
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="methode_soumission">Méthode de soumission :</label>
+                    <select id="methode_soumission" name="methode_soumission">
+                        <option value="">Sélectionner</option>
+                        <option value="IV">IV</option>
+                        <option value="Document Manager">Document Manager</option>
+                        <option value="Formulaire">Formulaire</option>
+						<option value="Esker Loader">Esker Loader</option>
+						<option value="SFTP">SFTP</option>
+						<option value="Impress">Impress</option>
+						<option value="Web Service">Web Service</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="environnement">Environnement :</label>
+                    <select id="environnement" name="environnement">
+                        <option value="">Sélectionner</option>
+                        <option value="Tour D">Tour D</option>
+                        <option value="Tour G">Tour G</option>
+                    </select>
+                </div>
+            </section>
+
+            <section>
+                <h2>Identification du client</h2>
+                <div class="form-group">
+                    <label for="client">Client :</label>
+                    <input type="text" id="client" name="client">
+                </div>
+
+                <div class="form-group">
+                    <label for="acces_support_utilisateur">Accès support Utilisateur :</label>
+                    <input type="text" id="acces_support_utilisateur" name="acces_support_utilisateur">
+                </div>
+
+                <div class="form-group">
+                    <label for="acces_service_user">Accès Service User :</label>
+                    <input type="text" id="acces_service_user" name="acces_service_user">
+                </div>
+            </section>
+
+            <section>
+                <h2>Anomalie</h2>
+                <div class="form-group">
+                    <label for="description_problematique">Description de la problématique :</label>
+                    <textarea id="description_problematique" name="description_problematique" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="besoin_client">Besoin client :</label>
+                    <textarea id="besoin_client" name="besoin_client" rows="4"></textarea>
+                </div>
+
+                <div class="date-group">
+					<label for="date_apparition_probleme">Date d'apparition du problème :</label><br>
+					<input type="date" id="date_apparition_probleme" name="date_apparition_probleme">
+					<span style="margin: 0 10px;">ou</span>
+					<input type="text" id="date_apparition_probleme_libre" name="date_apparition_probleme_libre" placeholder="Date relative">
+				</div>
+
+                <div class="form-group">
+                    <label for="id_long_ok">ID Long OK :</label>
+                    <input type="text" id="id_long_ok" name="id_long_ok">
+                </div>
+
+                <div class="form-group">
+                    <label for="id_long_nok">ID Long NOK :</label>
+                    <input type="text" id="id_long_nok" name="id_long_nok">
+                </div>
+            </section>
+
+            <section>
+                <h2>Analyse et Actions</h2>
+                <div class="form-group">
+                    <label for="analyse_actions">Analyse et actions menées :</label>
+                    <textarea id="analyse_actions" name="analyse_actions" rows="4"></textarea>
+                </div>
+            </section>
+
+            <div class="btn-group">
+                <button type="button" onclick="previsualiser()">Prévisualiser</button>
+                <button type="button" onclick="reinitialiserFormulaire()">Réinitialiser</button>
+            </div>
+        </form>
+
+        <div id="previsualisation">
+            <h2>Prévisualisation des données saisies</h2>
+            <pre id="contenu_previsualisation">Remplissez le formulaire et cliquez sur "Prévisualiser" pour voir le résultat ici.</pre>
+            <div id="copy_status" class="status-message success">Contenu copié !</div>
+            <div class="btn-group">
+                <button onclick="copierDansPressePapier()">Copier dans le presse-papiers</button>
+                <button onclick="genererFichier()">Télécharger le fichier TXT</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function previsualiser() {
+            // Faire défiler la page jusqu'en haut avant de prévisualiser
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
+            // Récupérer toutes les valeurs du formulaire
+            const contexte = document.getElementById("contexte").value;
+            const methodeSoumission = document.getElementById("methode_soumission").value;
+            const environnement = document.getElementById("environnement").value;
+            const client = document.getElementById("client").value;
+            const accesSupportUtilisateur = document.getElementById("acces_support_utilisateur").value;
+            const accesServiceUser = document.getElementById("acces_service_user").value;
+            const descriptionProblematique = document.getElementById("description_problematique").value;
+            const besoinClient = document.getElementById("besoin_client").value;
+            let dateApparitionProbleme = document.getElementById("date_apparition_probleme").value;
+            const dateApparitionProblemeLibre = document.getElementById("date_apparition_probleme_libre").value;
+            const idLongOk = document.getElementById("id_long_ok").value;
+            const idLongNok = document.getElementById("id_long_nok").value;
+            const analyseActions = document.getElementById("analyse_actions").value;
+
+            let contenu = "";
+
+            // Informations générales
+            contenu += "== Informations générales ==\n\n";
+            if (contexte) contenu += `Contexte : ${contexte}\n`;
+            if (methodeSoumission) contenu += `Méthode de soumission : ${methodeSoumission}\n`;
+            if (environnement) contenu += `Environnement : ${environnement}\n`;
+
+            // Identification du client
+            contenu += "\n== Identification du client ==\n\n";
+            if (client) contenu += `Client : ${client}\n`;
+            if (accesSupportUtilisateur) contenu += `Accès support Utilisateur : ${accesSupportUtilisateur}\n`;
+            if (accesServiceUser) contenu += `Accès service user : ${accesServiceUser}\n`;
+
+            // Anomalie
+            contenu += "\n== Anomalie ==\n\n";
+            if (descriptionProblematique) contenu += `Description de la problématique :\n${descriptionProblematique}\n\n`;
+            if (besoinClient) contenu += `Besoin client : ${besoinClient}\n\n`;
+
+            // Formater la date au format français (jj/mm/aaaa)
+            if (dateApparitionProbleme || dateApparitionProblemeLibre) {
+                let dateToShow = dateApparitionProblemeLibre;
+                if (dateApparitionProbleme) {
+                    const date = new Date(dateApparitionProbleme);
+                    const jour = String(date.getDate()).padStart(2, '0');
+                    const mois = String(date.getMonth() + 1).padStart(2, '0');
+                    const annee = date.getFullYear();
+                    dateToShow = `${jour}/${mois}/${annee}`;
+                }
+                contenu += `Date d'apparition du problème : ${dateToShow}\n\n`;
+            }
+            if (idLongOk) contenu += `ID Long OK : ${idLongOk}\n`;
+            if (idLongNok) contenu += `ID Long NOK : ${idLongNok}\n`;
+
+            // Analyse et Actions
+            contenu += "\n== Analyse et Actions ==\n\n";
+            if (analyseActions) contenu += `${analyseActions}\n`;
+
+            document.getElementById("contenu_previsualisation").textContent = contenu;
+        }
+
+        function genererFichier() {
+            const contenu = document.getElementById("contenu_previsualisation").textContent;
+            if (contenu.trim() === "Remplissez le formulaire et cliquez sur \"Prévisualiser\" pour voir le résultat ici.") {
+                alert("Veuillez d'abord prévisualiser le contenu avant de télécharger.");
+                return;
+            }
+            
+            const date = new Date();
+            const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+            const clientInfo = document.getElementById("client").value || "client";
+            const filename = `escalade_${clientInfo.replace(/\s+/g, '_')}_${dateStr}.txt`;
+            
+            const blob = new Blob([contenu], { type: "text/plain" });
+            const lien = document.createElement("a");
+            lien.href = URL.createObjectURL(blob);
+            lien.download = filename;
+            lien.click();
+        }
+
+        function copierDansPressePapier() {
+            const contenu = document.getElementById("contenu_previsualisation").textContent;
+            if (contenu.trim() === "Remplissez le formulaire et cliquez sur \"Prévisualiser\" pour voir le résultat ici.") {
+                alert("Veuillez d'abord prévisualiser le contenu avant de copier.");
+                return;
+            }
+            
+            navigator.clipboard.writeText(contenu)
+                .then(() => {
+                    const statusElem = document.getElementById("copy_status");
+                    statusElem.textContent = "Contenu copié dans le presse-papiers !";
+                    statusElem.style.display = "block";
+                    setTimeout(() => {
+                        statusElem.style.display = "none";
+                    }, 3000);
+                })
+                .catch(err => {
+                    console.error('Erreur lors de la copie: ', err);
+                    alert('Erreur lors de la copie. Vérifiez les paramètres de votre navigateur.');
+                });
+        }
+
+        function reinitialiserFormulaire() {
+            if (confirm("Êtes-vous sûr de vouloir réinitialiser le formulaire ?")) {
+                document.getElementById("formulaire").reset();
+                document.getElementById("contenu_previsualisation").textContent = "Remplissez le formulaire et cliquez sur \"Prévisualiser\" pour voir le résultat ici.";
+            }
+        }
+    </script>
+</body>
+
+</html>
