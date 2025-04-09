@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulaire Escalade</title>
+	<link rel="icon" type="image/png" href="favicon.png">
     <style>
         :root {
             --primary-color: #FF4500;
@@ -203,6 +204,22 @@
                 max-height: none;
             }
         }
+    
+        .add-id-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 5px;
+            padding: 0;
+            text-decoration: underline;
+        }
+
+        .add-id-btn:hover {
+            color: var(--primary-hover);
+        }
+
     </style>
 </head>
 
@@ -284,17 +301,23 @@
 					<label for="date_apparition_probleme">Date d'apparition du problème :</label><br>
 					<input type="date" id="date_apparition_probleme" name="date_apparition_probleme">
 					<span style="margin: 0 10px;">ou</span>
-					<input type="text" id="date_apparition_probleme_libre" name="date_apparition_probleme_libre" placeholder="Date relative">
+					<input type="text" id="date_apparition_probleme_libre" name="date_apparition_probleme_libre" placeholder="Ex : depuis la dernière mise à jour">
 				</div>
 
                 <div class="form-group">
-                    <label for="id_long_ok">ID Long OK :</label>
-                    <input type="text" id="id_long_ok" name="id_long_ok">
+                    <label>ID Long OK :</label>
+                    <div id="id_long_ok_container">
+                        <input type="text" name="id_long_ok[]" class="id-long-ok">
+                    </div>
+                    <button type="button" onclick="ajouterChamp('ok')" class="add-id-btn">+ Ajouter</button>
                 </div>
 
                 <div class="form-group">
-                    <label for="id_long_nok">ID Long NOK :</label>
-                    <input type="text" id="id_long_nok" name="id_long_nok">
+                    <label>ID Long NOK :</label>
+                    <div id="id_long_nok_container">
+                        <input type="text" name="id_long_nok[]" class="id-long-nok">
+                    </div>
+                    <button type="button" onclick="ajouterChamp('nok')" class="add-id-btn">+ Ajouter</button>
                 </div>
             </section>
 
@@ -325,13 +348,8 @@
 
     <script>
         function previsualiser() {
-            // Faire défiler la page jusqu'en haut avant de prévisualiser
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            // Récupérer toutes les valeurs du formulaire
             const contexte = document.getElementById("contexte").value;
             const methodeSoumission = document.getElementById("methode_soumission").value;
             const environnement = document.getElementById("environnement").value;
@@ -342,30 +360,36 @@
             const besoinClient = document.getElementById("besoin_client").value;
             let dateApparitionProbleme = document.getElementById("date_apparition_probleme").value;
             const dateApparitionProblemeLibre = document.getElementById("date_apparition_probleme_libre").value;
-            const idLongOk = document.getElementById("id_long_ok").value;
-            const idLongNok = document.getElementById("id_long_nok").value;
             const analyseActions = document.getElementById("analyse_actions").value;
+
+            const idLongOkElements = document.querySelectorAll('.id-long-ok');
+            const idLongNokElements = document.querySelectorAll('.id-long-nok');
+            
+            // Filtrer les valeurs vides
+            let idLongOkArray = Array.from(idLongOkElements)
+                .map(input => input.value.trim())
+                .filter(v => v !== "");
+            
+            let idLongNokArray = Array.from(idLongNokElements)
+                .map(input => input.value.trim())
+                .filter(v => v !== "");
 
             let contenu = "";
 
-            // Informations générales
             contenu += "== Informations générales ==\n\n";
             if (contexte) contenu += `Contexte : ${contexte}\n`;
             if (methodeSoumission) contenu += `Méthode de soumission : ${methodeSoumission}\n`;
             if (environnement) contenu += `Environnement : ${environnement}\n`;
 
-            // Identification du client
             contenu += "\n== Identification du client ==\n\n";
             if (client) contenu += `Client : ${client}\n`;
             if (accesSupportUtilisateur) contenu += `Accès support Utilisateur : ${accesSupportUtilisateur}\n`;
             if (accesServiceUser) contenu += `Accès service user : ${accesServiceUser}\n`;
 
-            // Anomalie
             contenu += "\n== Anomalie ==\n\n";
             if (descriptionProblematique) contenu += `Description de la problématique :\n${descriptionProblematique}\n\n`;
             if (besoinClient) contenu += `Besoin client : ${besoinClient}\n\n`;
 
-            // Formater la date au format français (jj/mm/aaaa)
             if (dateApparitionProbleme || dateApparitionProblemeLibre) {
                 let dateToShow = dateApparitionProblemeLibre;
                 if (dateApparitionProbleme) {
@@ -377,11 +401,26 @@
                 }
                 contenu += `Date d'apparition du problème : ${dateToShow}\n\n`;
             }
-            if (idLongOk) contenu += `ID Long OK : ${idLongOk}\n`;
-            if (idLongNok) contenu += `ID Long NOK : ${idLongNok}\n`;
 
-            // Analyse et Actions
-            contenu += "\n== Analyse et Actions ==\n\n";
+            // Afficher les ID Long OK sur des lignes séparées
+            if (idLongOkArray.length > 0) {
+                contenu += `ID Long OK :\n`;
+                idLongOkArray.forEach(id => {
+                    contenu += `- ${id}\n`;
+                });
+                contenu += "\n";
+            }
+
+            // Afficher les ID Long NOK sur des lignes séparées
+            if (idLongNokArray.length > 0) {
+                contenu += `ID Long NOK :\n`;
+                idLongNokArray.forEach(id => {
+                    contenu += `- ${id}\n`;
+                });
+                contenu += "\n";
+            }
+
+            contenu += "== Analyse et Actions ==\n\n";
             if (analyseActions) contenu += `${analyseActions}\n`;
 
             document.getElementById("contenu_previsualisation").textContent = contenu;
@@ -427,6 +466,19 @@
                     alert('Erreur lors de la copie. Vérifiez les paramètres de votre navigateur.');
                 });
         }
+
+        
+        function ajouterChamp(type) {
+            const containerId = type === 'ok' ? 'id_long_ok_container' : 'id_long_nok_container';
+            const container = document.getElementById(containerId);
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = type === 'ok' ? 'id_long_ok[]' : 'id_long_nok[]';
+            input.className = type === 'ok' ? 'id-long-ok' : 'id-long-nok';
+            input.style.marginTop = '5px';
+            container.appendChild(input);
+        }
+
 
         function reinitialiserFormulaire() {
             if (confirm("Êtes-vous sûr de vouloir réinitialiser le formulaire ?")) {
