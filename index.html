@@ -205,19 +205,79 @@
             }
         }
     
+        /* Style amélioré pour les boutons d'ajout */
         .add-id-btn {
-            background: none;
-            border: none;
+            display: inline-flex;
+            align-items: center;
+            background-color: transparent;
             color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
-            font-size: 0.9em;
-            margin-top: 5px;
-            padding: 0;
-            text-decoration: underline;
+            transition: all 0.2s ease;
         }
 
         .add-id-btn:hover {
-            color: var(--primary-hover);
+            background-color: rgba(255, 69, 0, 0.1);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-id-btn:active {
+            transform: translateY(0);
+        }
+
+        .add-id-btn::before {
+            content: "+";
+            margin-right: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Amélioration pour le conteneur d'ID */
+        .id-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .id-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .id-input-wrapper .id-long-ok,
+        .id-input-wrapper .id-long-nok {
+            padding-right: 30px;
+        }
+
+        .remove-id-btn {
+            position: absolute;
+            right: 5px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            padding: 5px;
+            flex: 0 0 auto;
+        }
+
+        .id-input-wrapper:hover .remove-id-btn {
+            opacity: 1;
+        }
+
+        .remove-id-btn:hover {
+            color: #f44336;
+            background: none;
+            transform: none;
         }
 
     </style>
@@ -306,18 +366,24 @@
 
                 <div class="form-group">
                     <label>ID Long OK :</label>
-                    <div id="id_long_ok_container">
-                        <input type="text" name="id_long_ok[]" class="id-long-ok">
+                    <div id="id_long_ok_container" class="id-container">
+                        <div class="id-input-wrapper">
+                            <input type="text" name="id_long_ok[]" class="id-long-ok">
+                            <button type="button" class="remove-id-btn" onclick="supprimerChamp(this)" title="Supprimer">×</button>
+                        </div>
                     </div>
-                    <button type="button" onclick="ajouterChamp('ok')" class="add-id-btn">+ Ajouter</button>
+                    <button type="button" onclick="ajouterChamp('ok')" class="add-id-btn">Ajouter un ID</button>
                 </div>
 
                 <div class="form-group">
                     <label>ID Long NOK :</label>
-                    <div id="id_long_nok_container">
-                        <input type="text" name="id_long_nok[]" class="id-long-nok">
+                    <div id="id_long_nok_container" class="id-container">
+                        <div class="id-input-wrapper">
+                            <input type="text" name="id_long_nok[]" class="id-long-nok">
+                            <button type="button" class="remove-id-btn" onclick="supprimerChamp(this)" title="Supprimer">×</button>
+                        </div>
                     </div>
-                    <button type="button" onclick="ajouterChamp('nok')" class="add-id-btn">+ Ajouter</button>
+                    <button type="button" onclick="ajouterChamp('nok')" class="add-id-btn">Ajouter un ID</button>
                 </div>
             </section>
 
@@ -467,24 +533,86 @@
                 });
         }
 
-        
         function ajouterChamp(type) {
             const containerId = type === 'ok' ? 'id_long_ok_container' : 'id_long_nok_container';
             const container = document.getElementById(containerId);
+            
+            // Créer le wrapper pour le nouvel input
+            const wrapper = document.createElement('div');
+            wrapper.className = 'id-input-wrapper';
+            
+            // Créer l'input
             const input = document.createElement('input');
             input.type = 'text';
             input.name = type === 'ok' ? 'id_long_ok[]' : 'id_long_nok[]';
             input.className = type === 'ok' ? 'id-long-ok' : 'id-long-nok';
-            input.style.marginTop = '5px';
-            container.appendChild(input);
+            
+            // Créer le bouton de suppression
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'remove-id-btn';
+            removeBtn.innerHTML = '×';
+            removeBtn.title = 'Supprimer';
+            removeBtn.onclick = function() { supprimerChamp(this); };
+            
+            // Assembler les éléments
+            wrapper.appendChild(input);
+            wrapper.appendChild(removeBtn);
+            container.appendChild(wrapper);
+            
+            // Focus sur le nouvel input
+            input.focus();
         }
 
+        function supprimerChamp(btn) {
+            const wrapper = btn.parentElement;
+            const container = wrapper.parentElement;
+            
+            // Si c'est le dernier champ, ne pas le supprimer mais le vider
+            if (container.children.length <= 1) {
+                const input = wrapper.querySelector('input');
+                input.value = '';
+                input.focus();
+                return;
+            }
+            
+            // Sinon, supprimer le wrapper
+            container.removeChild(wrapper);
+        }
 
         function reinitialiserFormulaire() {
             if (confirm("Êtes-vous sûr de vouloir réinitialiser le formulaire ?")) {
                 document.getElementById("formulaire").reset();
                 document.getElementById("contenu_previsualisation").textContent = "Remplissez le formulaire et cliquez sur \"Prévisualiser\" pour voir le résultat ici.";
+                
+                // Réinitialiser les conteneurs d'ID à un seul champ
+                resetIdContainer('id_long_ok_container', 'id-long-ok', 'id_long_ok[]');
+                resetIdContainer('id_long_nok_container', 'id-long-nok', 'id_long_nok[]');
             }
+        }
+        
+        function resetIdContainer(containerId, className, inputName) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'id-input-wrapper';
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = inputName;
+            input.className = className;
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'remove-id-btn';
+            removeBtn.innerHTML = '×';
+            removeBtn.title = 'Supprimer';
+            removeBtn.onclick = function() { supprimerChamp(this); };
+            
+            wrapper.appendChild(input);
+            wrapper.appendChild(removeBtn);
+            container.appendChild(wrapper);
         }
     </script>
 </body>
