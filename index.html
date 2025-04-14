@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulaire Escalade</title>
-	<link rel="icon" type="image/png" href="favicon.png">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
         :root {
+            /* Mode clair */
             --primary-color: #FF4500;
             --primary-hover: #E43A03;
             --background-start: #FF8C00;
@@ -17,12 +18,30 @@
             --input-border: #ddd;
             --text-color: #333;
             --label-color: #555;
+            --input-background: #ffffff;
+            --focus-outline: #4A90E2;
+        }
+
+        /* Mode sombre */
+        [data-theme="dark"] {
+            --primary-color: #FF6B3D;
+            --primary-hover: #FF8C66;
+            --background-start: #1a1a1a;
+            --background-mid: #2d2d2d;
+            --background-end: #3d3d3d;
+            --form-background: #2d2d2d;
+            --input-border: #444;
+            --text-color: #e0e0e0;
+            --label-color: #cccccc;
+            --input-background: #3d3d3d;
+            --focus-outline: #6BA7E2;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            outline: none;
         }
 
         body {
@@ -33,6 +52,141 @@
             min-height: 100vh;
             padding: 20px;
             overflow-y: auto;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        /* Style amélioré pour le switch du mode sombre */
+        .theme-switch-wrapper {
+            position: fixed;
+            top: 35px;
+            right: 62px;
+            display: flex;
+            align-items: center;
+            z-index: 100;
+            padding: 5px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            gap: 8px;
+        }
+
+        [data-theme="dark"] .theme-switch-wrapper {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-switch {
+            display: inline-block;
+            height: 24px;
+            position: relative;
+            width: 44px;
+            cursor: pointer;
+        }
+
+        .theme-icons {
+            font-size: 20px;
+            color: var(--text-color);
+            opacity: 0.7;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            height: 24px;
+            line-height: 24px;
+        }
+
+        .theme-icons span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 24px;
+            width: 24px;
+            transition: opacity 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .theme-icons .sun-icon {
+            color: #FFB100;
+            text-shadow: 0 0 4px rgba(255, 177, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .theme-icons .moon-icon {
+            color: #A5B9F2;
+            text-shadow: 0 0 4px rgba(165, 185, 242, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .theme-icons .sun-icon {
+            opacity: 0.4;
+            color: #FFB100;
+        }
+
+        [data-theme="light"] .theme-icons .moon-icon {
+            opacity: 0.6;
+            color: #8BA3E8;
+        }
+
+        [data-theme="dark"] .theme-icons .moon-icon {
+            color: #C5D5FF;
+            text-shadow: 0 0 5px rgba(197, 213, 255, 0.6);
+        }
+
+        .theme-icons span {
+            transition: opacity 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .theme-icons .sun-icon:hover,
+        .theme-icons .moon-icon:hover {
+            opacity: 1;
+            text-shadow: 0 0 5px currentColor;
+        }
+
+        .theme-switch input {
+            display: none;
+        }
+
+        .slider {
+            background-color: #e8e8e8;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .slider:before {
+            content: "";
+            background-color: white;
+            bottom: 3px;
+            height: 16px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 16px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        [data-theme="dark"] .slider {
+            background-color: #666;
+        }
+
+        .theme-switch:hover .slider:before {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .theme-label {
+            display: none;
         }
 
         .container {
@@ -43,30 +197,19 @@
             gap: 20px;
         }
 
-        #formulaire {
+        #formulaire, #previsualisation {
             flex: 1 1 400px;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
             background-color: var(--form-background);
-            transition: transform 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out;
             overflow-y: auto;
             max-height: 90vh;
         }
 
         #formulaire:hover {
             transform: scale(1.02);
-        }
-
-        #previsualisation {
-            flex: 1 1 500px;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            background-color: var(--form-background);
-            transition: transform 0.3s ease-in-out;
-            display: flex;
-            flex-direction: column;
         }
 
         #previsualisation:hover {
@@ -100,17 +243,41 @@
             padding: 10px;
             border: 1px solid var(--input-border);
             border-radius: 4px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
             font-size: 14px;
+            background-color: var(--input-background);
+            color: var(--text-color);
+            outline: none;
+        }
+
+        /* Styles spécifiques pour le sélecteur de date en mode sombre */
+        [data-theme="dark"] input[type="date"] {
+            background-color: #2a2a2a;
+            color: #ffffff;
+            border-color: #444;
+        }
+
+        [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.7;
+            cursor: pointer;
+        }
+
+        [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        [data-theme="dark"] input[type="date"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.2);
         }
 
         input[type="text"]:focus,
-        input[type="date"]:focus,
         select:focus,
         textarea:focus {
             border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.1);
             outline: none;
-            box-shadow: 0 0 5px rgba(255, 69, 0, 0.3);
         }
 
         .btn-group {
@@ -126,27 +293,34 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.2s ease;
+            transition: all 0.2s ease;
             font-weight: 600;
             flex: 1;
+            position: relative;
+            overflow: hidden;
         }
 
         button:hover {
             background-color: var(--primary-hover);
-            transform: translateY(-2px);
+        }
+
+        button:focus {
+            box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.1);
+            outline: none;
         }
 
         #contenu_previsualisation {
             white-space: pre-wrap;
             font-family: monospace;
-            background-color: #eee;
+            background-color: var(--input-background);
+            color: var(--text-color);
             padding: 15px;
             border-radius: 5px;
             flex: 1;
             overflow-y: auto;
             min-height: 300px;
             margin-bottom: 15px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--input-border);
         }
 
         .date-group {
@@ -280,11 +454,69 @@
             transform: none;
         }
 
+        /* Skip to main content */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Focus visible pour tous les éléments interactifs */
+        *:focus {
+            outline: none !important;
+        }
+
+        a:focus,
+        button:focus,
+        input:focus,
+        select:focus,
+        textarea:focus,
+        .theme-switch input:focus + .slider,
+        .skip-link:focus {
+            outline: none !important;
+            box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        /* Retirer spécifiquement l'outline du switch de thème */
+        .theme-switch input:focus + .slider {
+            outline: none !important;
+        }
+
+        /* Retirer la surbrillance sur les boutons de suppression d'ID */
+        .remove-id-btn:focus {
+            outline: none !important;
+            box-shadow: none;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    
+    <div class="theme-switch-wrapper" aria-label="Basculer le mode sombre">
+        <div class="theme-icons">
+            <span class="sun-icon" aria-hidden="true">☀</span>
+        </div>
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" aria-label="Basculer le mode sombre" />
+            <div class="slider" role="switch" aria-checked="false"></div>
+        </label>
+        <div class="theme-icons">
+            <span class="moon-icon" aria-hidden="true">☾</span>
+        </div>
+    </div>
+
+    <div class="container" id="main-content">
         <form id="formulaire">
             <section>
                 <h2>Informations générales</h2>
@@ -413,6 +645,31 @@
     </div>
 
     <script>
+        // Ajout du gestionnaire de mode sombre
+        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme) {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            if (currentTheme === 'dark') {
+                toggleSwitch.checked = true;
+            }
+        }
+
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                toggleSwitch.setAttribute('aria-checked', 'true');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                toggleSwitch.setAttribute('aria-checked', 'false');
+            }
+        }
+
+        toggleSwitch.addEventListener('change', switchTheme, false);
+
         function previsualiser() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -536,31 +793,28 @@
         function ajouterChamp(type) {
             const containerId = type === 'ok' ? 'id_long_ok_container' : 'id_long_nok_container';
             const container = document.getElementById(containerId);
+            const index = container.children.length + 1;
             
-            // Créer le wrapper pour le nouvel input
             const wrapper = document.createElement('div');
             wrapper.className = 'id-input-wrapper';
             
-            // Créer l'input
             const input = document.createElement('input');
             input.type = 'text';
             input.name = type === 'ok' ? 'id_long_ok[]' : 'id_long_nok[]';
             input.className = type === 'ok' ? 'id-long-ok' : 'id-long-nok';
+            input.setAttribute('aria-label', `ID Long ${type.toUpperCase()} ${index}`);
             
-            // Créer le bouton de suppression
             const removeBtn = document.createElement('button');
             removeBtn.type = 'button';
             removeBtn.className = 'remove-id-btn';
             removeBtn.innerHTML = '×';
-            removeBtn.title = 'Supprimer';
+            removeBtn.setAttribute('aria-label', `Supprimer ID Long ${type.toUpperCase()} ${index}`);
             removeBtn.onclick = function() { supprimerChamp(this); };
             
-            // Assembler les éléments
             wrapper.appendChild(input);
             wrapper.appendChild(removeBtn);
             container.appendChild(wrapper);
             
-            // Focus sur le nouvel input
             input.focus();
         }
 
