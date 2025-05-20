@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <title>Formulaire Escalade</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <style>
     :root{
       --primary-color:#FF6B3D;
@@ -52,8 +52,8 @@
     body{
       font-family:'Inter',Arial,sans-serif;
       background:linear-gradient(120deg,var(--background-start),var(--background-mid),var(--background-end));
-      background-size:400% 400%;
-      animation:gradient 15s ease infinite;
+      background-size:200% 200%;
+      animation:gradientMove 12s ease-in-out infinite;
       min-height:100vh;
       padding:32px 0;
       color:var(--text-color);
@@ -95,13 +95,17 @@
     }
     h2{
       color:var(--text-color);
-      text-shadow:0 2px 8px rgba(0,0,0,0.04);
+      text-shadow:0 0 8px var(--primary-color), 0 0 24px var(--primary-hover);
       margin-bottom:18px;
       padding-bottom:8px;
       border-bottom:1px solid var(--input-border);
       font-weight:700;
       letter-spacing:0.01em;
       font-size:1.35rem;
+      font-family: 'Orbitron', 'Inter', Arial, sans-serif;
+    }
+    [data-theme=dark] h2 {
+      text-shadow: 0 0 12px #6ba7e2, 0 0 32px #4a90e2;
     }
     .form-group{margin-bottom:18px;}
     label{font-weight:600;color:var(--label-color);display:block;margin-bottom:7px;letter-spacing:0.01em;}
@@ -129,6 +133,14 @@
       align-items:center;
       justify-content:center;
       gap:8px;
+    }
+    button:not(.add-id-btn):not(.remove-id-btn) {
+      box-shadow: 0 0 0 0 var(--primary-color), 0 2px 8px rgba(0,0,0,0.08);
+      transition: box-shadow .3s cubic-bezier(.4,0,.2,1);
+    }
+    button:not(.add-id-btn):not(.remove-id-btn):hover,
+    button:not(.add-id-btn):not(.remove-id-btn):focus {
+      box-shadow: 0 0 16px 2px var(--primary-hover), 0 6px 18px rgba(255,107,61,0.10);
     }
     button:hover,button:focus{
       background:var(--btn-gradient-hover);
@@ -175,6 +187,10 @@
     .theme-switch-fab{position:fixed;top:30px;right:30px;z-index:200;}
     #theme-toggle-btn{width:54px;height:54px;border:none;border-radius:50%;background:linear-gradient(135deg,#fff 60%,#f7c873 100%);box-shadow:0 4px 16px rgba(0,0,0,0.10);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .3s,box-shadow .3s;outline:none;}
     #theme-toggle-btn:focus,#theme-toggle-btn:hover{box-shadow:0 0 0 5px #ffe06699,0 4px 16px rgba(0,0,0,0.18);}
+    #theme-toggle-btn:active .theme-icon svg {
+  transform: rotate(30deg) scale(1.08);
+  transition: transform .2s;
+}
     .theme-icon{display:flex;align-items:center;justify-content:center;width:32px;height:32px;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .3s;}
     .theme-icon svg{width:32px;height:32px;display:block;}
     .theme-icon.sun{color:#f9d923;}.theme-icon.moon{color:#bfcfff;}[data-theme="dark"] #theme-toggle-btn{background:linear-gradient(135deg,#23272f 60%,#7a8bbd 100%);}[data-theme="dark"] .theme-icon.sun{opacity:0;transform:rotate(-90deg) scale(0.7);}[data-theme="dark"] .theme-icon.moon{opacity:1;transform:rotate(0deg) scale(1);}[data-theme="light"] .theme-icon.sun{opacity:1;transform:rotate(0deg) scale(1);}[data-theme="light"] .theme-icon.moon{opacity:0;transform:rotate(90deg) scale(0.7);}
@@ -199,6 +215,22 @@
     body::-webkit-scrollbar-thumb:hover, #formulaire::-webkit-scrollbar-thumb:hover, #previsualisation::-webkit-scrollbar-thumb:hover, textarea::-webkit-scrollbar-thumb:hover, .container::-webkit-scrollbar-thumb:hover {
       background: var(--scroll-thumb-hover);
     }
+    /* Ajoute ceci dans le style existant, par exemple après .container */
+#formulaire, #previsualisation {
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px) saturate(160%);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.18);
+}
+[data-theme=dark] #formulaire, 
+[data-theme=dark] #previsualisation {
+  background: rgba(30,36,54,0.65);
+  backdrop-filter: blur(14px) saturate(180%);
+  border: 1.5px solid rgba(255,255,255,0.10);
+}
+    /* Ajoute après .theme-icon.sun et .theme-icon.moon */
+.theme-icon.sun { color: #222; opacity: 0.92; }
+[data-theme="dark"] .theme-icon.sun { color: #bfcfff; opacity: 0.7; }
     </style>
 </head>
 <body>
@@ -329,10 +361,22 @@ function setThemeIcon(themeBtn){
   if(!themeBtn) return;
   const icon=themeBtn.querySelector('.theme-icon');
   const theme=document.documentElement.getAttribute('data-theme')||'light';
-  icon.innerHTML=theme==='dark'
-    ? `<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>`
-    : `<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
-  icon.className='theme-icon '+(theme==='dark'?'moon':'sun');
+  icon.innerHTML = theme === 'dark'
+  ? `<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>`
+  : `<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <g>
+        <line x1="12" y1="1.5" x2="12" y2="4"/>
+        <line x1="12" y1="20" x2="12" y2="22.5"/>
+        <line x1="4" y1="12" x2="1.5" y2="12"/>
+        <line x1="20" y1="12" x2="22.5" y2="12"/>
+        <line x1="5.64" y1="5.64" x2="4.1" y2="4.1"/>
+        <line x1="18.36" y1="18.36" x2="19.9" y2="19.9"/>
+        <line x1="5.64" y1="18.36" x2="4.1" y2="19.9"/>
+        <line x1="18.36" y1="5.64" x2="19.9" y2="4.1"/>
+      </g>
+    </svg>`;
+icon.className = 'theme-icon ' + (theme === 'dark' ? 'moon' : 'sun');
 }
 function toggleTheme(themeBtn){
   const isDark=document.documentElement.getAttribute('data-theme')==='dark';
@@ -357,12 +401,55 @@ if(document.readyState==='loading'){
   initThemeBtn();
 }
 // ... reste du code (prévisualisation, etc.) ...
-window.previsualiser=function(){window.scrollTo({top:0,behavior:'smooth'});const qs=(s)=>document.querySelector(s),qsa=(s)=>document.querySelectorAll(s);const contexte=qs('#contexte').value,methodeSoumission=qs('#methode_soumission').value,environnement=qs('#environnement').value,client=qs('#client').value,accesSupportUtilisateur=qs('#acces_support_utilisateur').value,accesServiceUser=qs('#acces_service_user').value,descriptionProblematique=qs('#description_problematique').value,besoinClient=qs('#besoin_client').value,dateApparitionProbleme=qs('#date_apparition_probleme').value,dateApparitionProblemeLibre=qs('#date_apparition_probleme_libre').value,analyseActions=qs('#analyse_actions').value,idLongOkArray=Array.from(qsa('.id-long-ok')).map(i=>i.value.trim()).filter(v=>v!==''),idLongNokArray=Array.from(qsa('.id-long-nok')).map(i=>i.value.trim()).filter(v=>v!=='');   function escapeHTML(str) {
-    return str.replace(/[<>"']/g, function(m) {
-      return {'<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m];
-    });
+window.previsualiser=function(){
+  window.scrollTo({top:0,behavior:'smooth'});
+  const qs=(s)=>document.querySelector(s),qsa=(s)=>document.querySelectorAll(s);
+  const contexte=qs('#contexte').value,
+        methodeSoumission=qs('#methode_soumission').value,
+        environnement=qs('#environnement').value,
+        client=qs('#client').value,
+        accesSupportUtilisateur=qs('#acces_support_utilisateur').value,
+        accesServiceUser=qs('#acces_service_user').value,
+        descriptionProblematique=qs('#description_problematique').value,
+        besoinClient=qs('#besoin_client').value,
+        dateApparitionProbleme=qs('#date_apparition_probleme').value,
+        dateApparitionProblemeLibre=qs('#date_apparition_probleme_libre').value,
+        analyseActions=qs('#analyse_actions').value,
+        idLongOkArray=Array.from(qsa('.id-long-ok')).map(i=>i.value.trim()).filter(v=>v!==''),
+        idLongNokArray=Array.from(qsa('.id-long-nok')).map(i=>i.value.trim()).filter(v=>v!=='');
+  let contenu='== Informations générales ==\n\n';
+  if(contexte)contenu+=`Contexte : ${contexte}\n`;
+  if(methodeSoumission)contenu+=`Méthode de soumission : ${methodeSoumission}\n`;
+  if(environnement)contenu+=`Environnement : ${environnement}\n`;
+  contenu+='\n== Identification du client ==\n\n';
+  if(client)contenu+=`Client : ${client}\n`;
+  if(accesSupportUtilisateur)contenu+=`Accès support Utilisateur : ${accesSupportUtilisateur}\n`;
+  if(accesServiceUser)contenu+=`Accès service user : ${accesServiceUser}\n`;
+  contenu+='\n== Anomalie ==\n\n';
+  if(descriptionProblematique)contenu+=`Description de la problématique :\n${descriptionProblematique}\n\n`;
+  if(besoinClient)contenu+=`Besoin client : ${besoinClient}\n\n`;
+  if(dateApparitionProbleme||dateApparitionProblemeLibre){
+    let dateToShow=dateApparitionProblemeLibre;
+    if(dateApparitionProbleme){
+      const d=new Date(dateApparitionProbleme);
+      dateToShow=`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+    }
+    contenu+=`Date d'apparition du problème : ${dateToShow}\n\n`;
   }
-  let contenu='== Informations générales ==\n\n';if(contexte)contenu+=`Contexte : ${escapeHTML(contexte)}\n`;if(methodeSoumission)contenu+=`Méthode de soumission : ${escapeHTML(methodeSoumission)}\n`;if(environnement)contenu+=`Environnement : ${escapeHTML(environnement)}\n`;contenu+='\n== Identification du client ==\n\n';if(client)contenu+=`Client : ${escapeHTML(client)}\n`;if(accesSupportUtilisateur)contenu+=`Accès support Utilisateur : ${escapeHTML(accesSupportUtilisateur)}\n`;if(accesServiceUser)contenu+=`Accès service user : ${escapeHTML(accesServiceUser)}\n`;contenu+='\n== Anomalie ==\n\n';if(descriptionProblematique)contenu+=`Description de la problématique :\n${escapeHTML(descriptionProblematique)}\n\n`;if(besoinClient)contenu+=`Besoin client : ${escapeHTML(besoinClient)}\n\n`;if(dateApparitionProbleme||dateApparitionProblemeLibre){let dateToShow=dateApparitionProblemeLibre;if(dateApparitionProbleme){const d=new Date(dateApparitionProbleme);dateToShow=`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;}contenu+=`Date d'apparition du problème : ${escapeHTML(dateToShow)}\n\n`;}if(idLongOkArray.length>0){contenu+='ID Long OK :\n';idLongOkArray.forEach(id=>{contenu+=`- ${id}\n`;});contenu+='\n';}if(idLongNokArray.length>0){contenu+='ID Long NOK :\n';idLongNokArray.forEach(id=>{contenu+=`- ${id}\n`;});contenu+='\n';}contenu+='== Analyse et Actions ==\n\n';if(analyseActions)contenu+=`${escapeHTML(analyseActions)}\n`;qs('#contenu_previsualisation').textContent=contenu;};window.genererFichier=function(){const contenu=document.getElementById('contenu_previsualisation').textContent;if(contenu.trim()==='Remplissez le formulaire et cliquez sur \"Prévisualiser\" pour voir le résultat ici.')return alert("Veuillez d'abord prévisualiser le contenu avant de télécharger.");const date=new Date(),dateStr=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`,clientInfo=document.getElementById('client').value||'client',filename=`escalade_${clientInfo.replace(/\s+/g,'_')}_${dateStr}.txt`,blob=new Blob([contenu],{type:'text/plain'}),lien=document.createElement('a');lien.href=URL.createObjectURL(blob);lien.download=filename;lien.click();};window.copierDansPressePapier=function(){const contenu=document.getElementById('contenu_previsualisation').textContent;if(contenu.trim()==='Remplissez le formulaire et cliquez sur \"Prévisualiser\" pour voir le résultat ici.')return alert("Veuillez d'abord prévisualiser le contenu avant de copier.");navigator.clipboard.writeText(contenu).then(()=>{const statusElem=document.getElementById('copy_status');statusElem.textContent='Contenu copié dans le presse-papiers !';statusElem.style.display='block';setTimeout(()=>{statusElem.style.display='none';},3000);}).catch(err=>{console.error('Erreur lors de la copie: ',err);alert('Erreur lors de la copie. Vérifiez les paramètres de votre navigateur.');});};window.ajouterChamp=function(type){const containerId=type==='ok'?'id_long_ok_container':'id_long_nok_container',container=document.getElementById(containerId),index=container.children.length+1,wrapper=document.createElement('div');wrapper.className='id-input-wrapper';const input=document.createElement('input');input.type='text';input.name=type==='ok'?'id_long_ok[]':'id_long_nok[]';input.className=type==='ok'?'id-long-ok':'id-long-nok';input.setAttribute('aria-label',`ID Long ${type.toUpperCase()} ${index}`);const removeBtn=document.createElement('button');removeBtn.type='button';removeBtn.className='remove-id-btn';removeBtn.innerHTML='×';removeBtn.setAttribute('aria-label',`Supprimer ID Long ${type.toUpperCase()} ${index}`);removeBtn.onclick=function(){window.supprimerChamp(this);};wrapper.appendChild(input);wrapper.appendChild(removeBtn);container.appendChild(wrapper);input.focus();};window.supprimerChamp=function(btn){const wrapper=btn.parentElement,container=wrapper.parentElement;if(container.children.length<=1){const input=wrapper.querySelector('input');input.value='';input.focus();return;}container.removeChild(wrapper);};window.reinitialiserFormulaire=function(){if(confirm("Êtes-vous sûr de vouloir réinitialiser le formulaire ?")){document.getElementById('formulaire').reset();document.getElementById('contenu_previsualisation').textContent='Remplissez le formulaire et cliquez sur "Prévisualiser" pour voir le résultat ici.';resetIdContainer('id_long_ok_container','id-long-ok','id_long_ok[]');resetIdContainer('id_long_nok_container','id-long-nok','id_long_nok[]');}};function resetIdContainer(containerId,className,inputName){const container=document.getElementById(containerId);container.innerHTML='';const wrapper=document.createElement('div');wrapper.className='id-input-wrapper';const input=document.createElement('input');input.type='text';input.name=inputName;input.className=className;const removeBtn=document.createElement('button');removeBtn.type='button';removeBtn.className='remove-id-btn';removeBtn.innerHTML='×';removeBtn.title='Supprimer';removeBtn.onclick=function(){window.supprimerChamp(this);};wrapper.appendChild(input);wrapper.appendChild(removeBtn);container.appendChild(wrapper);}
+  if(idLongOkArray.length>0){
+    contenu+='ID Long OK :\n';
+    idLongOkArray.forEach(id=>{contenu+=`- ${id}\n`;});
+    contenu+='\n';
+  }
+  if(idLongNokArray.length>0){
+    contenu+='ID Long NOK :\n';
+    idLongNokArray.forEach(id=>{contenu+=`- ${id}\n`;});
+    contenu+='\n';
+  }
+  contenu+='== Analyse et Actions ==\n\n';
+  if(analyseActions)contenu+=`${analyseActions}\n`;
+  qs('#contenu_previsualisation').textContent=contenu;
+};window.genererFichier=function(){const contenu=document.getElementById('contenu_previsualisation').textContent;if(contenu.trim()==='Remplissez le formulaire et cliquez sur "Prévisualiser" pour voir le résultat ici.')return alert("Veuillez d'abord prévisualiser le contenu avant de télécharger.");const date=new Date(),dateStr=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`,clientInfo=document.getElementById('client').value||'client',filename=`escalade_${clientInfo.replace(/\s+/g,'_')}_${dateStr}.txt`,blob=new Blob([contenu],{type:'text/plain'}),lien=document.createElement('a');lien.href=URL.createObjectURL(blob);lien.download=filename;lien.click();};window.copierDansPressePapier=function(){const contenu=document.getElementById('contenu_previsualisation').textContent;if(contenu.trim()==='Remplissez le formulaire et cliquez sur "Prévisualiser" pour voir le résultat ici.')return alert("Veuillez d'abord prévisualiser le contenu avant de copier.");navigator.clipboard.writeText(contenu).then(()=>{const statusElem=document.getElementById('copy_status');statusElem.textContent='Contenu copié dans le presse-papiers !';statusElem.style.display='block';setTimeout(()=>{statusElem.style.display='none';},3000);}).catch(err=>{console.error('Erreur lors de la copie: ',err);alert('Erreur lors de la copie. Vérifiez les paramètres de votre navigateur.');});};window.ajouterChamp=function(type){const containerId=type==='ok'?'id_long_ok_container':'id_long_nok_container',container=document.getElementById(containerId),index=container.children.length+1,wrapper=document.createElement('div');wrapper.className='id-input-wrapper';const input=document.createElement('input');input.type='text';input.name=type==='ok'?'id_long_ok[]':'id_long_nok[]';input.className=type==='ok'?'id-long-ok':'id-long-nok';input.setAttribute('aria-label',`ID Long ${type.toUpperCase()} ${index}`);const removeBtn=document.createElement('button');removeBtn.type='button';removeBtn.className='remove-id-btn';removeBtn.innerHTML='×';removeBtn.setAttribute('aria-label',`Supprimer ID Long ${type.toUpperCase()} ${index}`);removeBtn.onclick=function(){window.supprimerChamp(this);};wrapper.appendChild(input);wrapper.appendChild(removeBtn);container.appendChild(wrapper);input.focus();};window.supprimerChamp=function(btn){const wrapper=btn.parentElement,container=wrapper.parentElement;if(container.children.length<=1){const input=wrapper.querySelector('input');input.value='';input.focus();return;}container.removeChild(wrapper);};window.reinitialiserFormulaire=function(){if(confirm("Êtes-vous sûr de vouloir réinitialiser le formulaire ?")){document.getElementById('formulaire').reset();document.getElementById('contenu_previsualisation').textContent='Remplissez le formulaire et cliquez sur "Prévisualiser" pour voir le résultat ici.';resetIdContainer('id_long_ok_container','id-long-ok','id_long_ok[]');resetIdContainer('id_long_nok_container','id-long-nok','id_long_nok[]');}};function resetIdContainer(containerId,className,inputName){const container=document.getElementById(containerId);container.innerHTML='';const wrapper=document.createElement('div');wrapper.className='id-input-wrapper';const input=document.createElement('input');input.type='text';input.name=inputName;input.className=className;const removeBtn=document.createElement('button');removeBtn.type='button';removeBtn.className='remove-id-btn';removeBtn.innerHTML='×';removeBtn.title='Supprimer';removeBtn.onclick=function(){window.supprimerChamp(this);};wrapper.appendChild(input);wrapper.appendChild(removeBtn);container.appendChild(wrapper);}
 })();
     </script>
 </body>
