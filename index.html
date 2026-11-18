@@ -8,24 +8,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <style>
     :root{
-      --primary-color:#FF6B3D;
-      --primary-hover:#FF8C66;
-      --background-start:#ffe5d0;
-      --background-mid:#ffd1a9;
-      --background-end:#ffb385;
+      --primary-color:#2F74C9;
+      --primary-hover:#5A9BE0;
+      --background-start:#e8f2fc;
+      --background-mid:#d3e5f8;
+      --background-end:#b9d5f2;
       --form-background: #fff;
       --form-blur: none;
-      --input-border:#f7c6a3;
+      --input-border:#aac9ee;
       --text-color:#222;
       --label-color:#444;
       --input-background:rgba(255,255,255,0.7);
-      --focus-outline:#FF8C66;
-      --shadow:0 8px 32px 0 rgba(255,107,61,0.10);
+      --focus-outline:#5A9BE0;
+      --shadow:0 8px 32px 0 rgba(47,116,201,0.12);
       --glass-border:1.5px solid rgba(255,255,255,0.25);
-      --btn-gradient:linear-gradient(90deg,#ff9966 0%,#ff5e62 100%);
-      --btn-gradient-hover:linear-gradient(90deg,#ff5e62 0%,#ff9966 100%);
-      --scroll-thumb: #ffb385cc;
-      --scroll-thumb-hover: #ff8c66cc;
+      --btn-gradient:linear-gradient(90deg,#3b8be0 0%,#2f5fcf 100%);
+      --btn-gradient-hover:linear-gradient(90deg,#2f5fcf 0%,#3b8be0 100%);
+      --scroll-thumb: #b9d5f2cc;
+      --scroll-thumb-hover: #5a9be0cc;
       --scroll-track: transparent;
     }
     [data-theme=dark]{
@@ -140,12 +140,12 @@
     }
     button:not(.add-id-btn):not(.remove-id-btn):hover,
     button:not(.add-id-btn):not(.remove-id-btn):focus {
-      box-shadow: 0 0 16px 2px var(--primary-hover), 0 6px 18px rgba(255,107,61,0.10);
+      box-shadow: 0 0 16px 2px var(--primary-hover), 0 6px 18px rgba(47,116,201,0.12);
     }
     button:hover,button:focus{
       background:var(--btn-gradient-hover);
       transform:translateY(-2px) scale(1.03);
-      box-shadow:0 6px 18px rgba(255,107,61,0.10);
+      box-shadow:0 6px 18px rgba(47,116,201,0.12);
     }
     .add-id-btn{
       background:transparent;
@@ -166,7 +166,7 @@
       color:var(--primary-hover);
       border-color:var(--primary-hover);
       transform:translateY(-1px) scale(1.04);
-      box-shadow:0 2px 8px rgba(255,107,61,0.08);
+      box-shadow:0 2px 8px rgba(47,116,201,0.10);
     }
     .add-id-btn::before{content:"+";margin-right:5px;font-weight:bold;font-size:15px;}
     .id-container{display:flex;flex-direction:column;gap:8px;}
